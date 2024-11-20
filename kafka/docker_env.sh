@@ -12,12 +12,14 @@ fi
 if [[ $1 == "up" ]]
 then
     echo "Docker compose deploy"
-    ./local_secrets.sh --kafka-root local-kafka --kms-root kms --service-root service
+    pushd ./secrets
+    ./certificate_generator.sh
+    popd
     $cmd up -d
 else
     if [[ $1 == "down" ]]
     then
         echo "Docker compose destroy"
-        $cmd down --remove-orphans
+        $cmd down --remove-orphans -v
     fi
 fi
