@@ -1,5 +1,9 @@
 # docker compose with kafka for development
 
+## Diagram
+![Diagram](./Diagram.jpg)
+
+## CLI
 - run docker compose env
 ```bash
 ./docker_env.sh up
