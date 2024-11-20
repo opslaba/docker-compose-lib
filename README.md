@@ -3,3 +3,4 @@ Library with docker compose scripts
 
 ## Projects
 - [Containerized Kafka](./kafka/README.md)
+- [Keycloak](./keycloak/README.md)
