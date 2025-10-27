@@ -3,70 +3,57 @@ version: "3.3"
 services:
   kafka.local:
     image: docker.io/confluentinc/cp-kafka:7.4.3
+    hostname: kafka.local
     ports:
       - "19092:19092"
-      - "19094:19094"
     environment:
       KAFKA_KRAFT_MODE: 'true'
       KAFKA_PROCESS_ROLES: broker,controller
-      KAFKA_BROKER_ID: '1'
-      KAFKA_NODE_ID: '1'
+      KAFKA_BROKER_ID: 1
+      KAFKA_NODE_ID: 1
       CLUSTER_ID: 4L6g3nShT-eMCtK--X86sw
       KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka.local:9093
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT,PLAINTEXT_LOCALHOST:PLAINTEXT,SASL_SSL:SASL_SSL,SASL_SSL_LOCALHOST:SASL_SSL
-      KAFKA_LISTENERS: CONTROLLER://kafka.local:9093,PLAINTEXT_HOST://kafka.local:9092,PLAINTEXT_LOCALHOST://0.0.0.0:19092,SASL_SSL://kafka.local:9094,SASL_SSL_LOCALHOST://0.0.0.0:19094
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT_HOST://kafka.local:9092,PLAINTEXT_LOCALHOST://localhost:19092,SASL_SSL://kafka.local:9094,SASL_SSL_LOCALHOST://localhost:19094
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: '1'
-      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: '0'
-      KAFKA_CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR: '1'
-      KAFKA_SSL_CLIENT_AUTH: required
-      KAFKA_SECURITY_INTER_BROKER_PROTOCOL: SASL_SSL
-      KAFKA_SASL_ENABLED_MECHANISMS: PLAIN
-      KAFKA_SASL_MECHANISM_INTER_BROKER_PROTOCOL: PLAIN
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_LISTENERS: CONTROLLER://kafka.local:9093,PLAINTEXT://kafka.local:9092,PLAINTEXT_HOST://0.0.0.0:19092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka.local:9092,PLAINTEXT_HOST://localhost:19092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_SECURITY_INTER_BROKER_PROTOCOL: PLAINTEXT
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
-      KAFKA_OPTS: -Djava.security.auth.login.config=/etc/kafka/secrets/kafka_server_jaas.conf
       KAFKA_HEAP_OPTS: -Xmx2G -Xms2G
-    volumes:
-      - ./secrets/:/etc/kafka/secrets/
-      - data:/var/lib/kafka/data
-    env_file:
-      - ./secrets/env_kafka
     networks:
-      - docker-compose-network
+      compose_network:
 
   topics-init:
     image: docker.io/confluentinc/cp-kafka:7.4.3
-    depends_on:
-      - kafka.local
     command:
       - /bin/bash
       - -c
       - |
         echo "Waiting for Kafka to be ready..."
-        cub kafka-ready -b kafka.local:9092 1 60
-        kafka-topics --create --if-not-exists --bootstrap-server kafka.local:9092 --partitions 3 --replication-factor 1 --topic default
+        cub kafka-ready -b kafka.local:9092 1 20
+        kafka-topics --create --if-not-exists --bootstrap-server kafka.local:9092 --partitions 2 --replication-factor 1 --topic default_topic
+    depends_on:
+      - "kafka.local"
     networks:
-      - docker-compose-network
+      compose_network:
 
   kafdrop.local:
     image: docker.io/obsidiandynamics/kafdrop:3.31.0
-    depends_on:
-      - kafka.local
     ports:
-      - "8080:8080"
+      - "9100:9000"
     environment:
-      SERVER_PORT: 8080
       KAFKA_BROKERCONNECT: "kafka.local:9092"
       JVM_OPTS: "-Xms16M -Xmx48M -Xss180K -XX:-TieredCompilation -XX:+UseStringDeduplication -noverify"
+    depends_on:
+      - "kafka.local"
     networks:
-      - docker-compose-network
+      compose_network:
 
 networks:
-  docker-compose-network:
+  compose_network:
     ipam:
       config:
         - subnet: 172.24.24.0/24
-
-volumes:
-  data:

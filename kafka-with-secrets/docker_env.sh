@@ -12,6 +12,9 @@ fi
 if [[ $1 == "up" ]]
 then
     echo "Docker compose deploy"
+    pushd ./secrets
+    ./certificate_generator.sh
+    popd
     $cmd up -d
 else
     if [[ $1 == "down" ]]
