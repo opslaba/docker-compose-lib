@@ -1,0 +1,8 @@
+[
+  {
+    "name" : "google-com",
+    "listen" : "[::]:8443",
+    "upstream" : "google.com:443",
+    "enabled" : true
+  }
+]

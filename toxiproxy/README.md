@@ -1,4 +1,4 @@
-# docker compose with mongodb for development
+# docker compose with toxiproxy for development
 
 ## Diagram
 ![Diagram](./Diagram.jpg)

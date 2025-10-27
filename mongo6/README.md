@@ -1,4 +1,4 @@
-# docker compose with kafka for development
+# docker compose with mongodb for development
 
 ## Diagram
 ![Diagram](./Diagram.jpg)
@@ -12,5 +12,3 @@
 ```bash
 ./docker_env.sh down
 ```
-
-Local kafka-ui url: http://localhost:8080

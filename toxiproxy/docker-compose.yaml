@@ -1,0 +1,19 @@
+version: "3.3"
+
+services:
+  toxiproxy:
+    image: docker.io/shopify/toxiproxy:2.1.4
+    command: -host=0.0.0.0 -config /toxiproxy.json
+    ports:
+      - "8474:8474"
+      - "8443:8443"
+    volumes:
+      - ./toxiproxy.json:/toxiproxy.json
+    networks:
+      compose_network:
+
+networks:
+  compose_network:
+    ipam:
+      config:
+        - subnet: 172.24.24.0/24
