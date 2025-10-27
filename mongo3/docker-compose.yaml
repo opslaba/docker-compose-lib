@@ -1,0 +1,16 @@
+version: "3.3"
+
+services:
+  mongo.local:
+    image: docker.io/library/mongo:3.6.3
+    ports:
+      - "27017-27019:27017-27019"
+    networks:
+      compose_network:
+        ipv4_address: 172.24.24.12
+
+networks:
+  compose_network:
+    ipam:
+      config:
+        - subnet: 172.24.24.0/24

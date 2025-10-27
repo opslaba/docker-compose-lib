@@ -1,0 +1,22 @@
+version: "3.3"
+
+services:
+  mongo.local:
+    image: docker.io/library/mongo:6.0.11
+#    command: >
+#      /usr/local/bin/docker-entrypoint.sh mongod --tlsMode allowTLS --tlsCertificateKeyFile /etc/mongo/secrets/cert.pem";
+    ports:
+      - "27017-27019:27017-27019"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+#    volumes:
+#      - ./secrets/:/etc/mongo/secrets/
+    networks:
+      compose_network:
+
+networks:
+  compose_network:
+    ipam:
+      config:
+        - subnet: 172.24.24.0/24
