@@ -1,0 +1,26 @@
+version: "3.3"
+
+services:
+  cockroachdb:
+    image: docker.io/cockroachdb/cockroach:v23.2.0
+    entrypoint: ["/bin/sh","-c"]
+    command: "/script/startup.sh"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8181/health?ready=1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - ./scripts:/script
+    ports:
+      - "26257:26257"
+      - "26357:26357"
+      - "8181:8181"
+    networks:
+      compose_network:
+
+networks:
+  compose_network:
+    ipam:
+      config:
+        - subnet: 172.24.24.0/24
