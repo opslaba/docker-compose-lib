@@ -1,0 +1,18 @@
+version: "3.3"
+
+services:
+  wiremock:
+    image: docker.io/wiremock/wiremock:3.5.2
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./assets/files:/home/wiremock/__files
+      - ./assets/mappings:/home/wiremock/mappings
+    networks:
+      compose_network:
+
+networks:
+  compose_network:
+    ipam:
+      config:
+        - subnet: 172.24.24.0/24
