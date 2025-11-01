@@ -13,4 +13,4 @@
 ./docker_env.sh down
 ```
 
-Local kafka-ui url: http://localhost:8080
+Local kafka-ui url: http://localhost:9100
